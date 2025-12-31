@@ -1,59 +1,82 @@
 "use client";
-import { motion } from "motion/react";
+import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
+import React from "react";
 
 export default function CommitRank({ stats }: any) {
+    const x = useMotionValue(0);
+    const y = useMotionValue(0);
+
+    const mouseX = useSpring(x, { stiffness: 50, damping: 20 });
+    const mouseY = useSpring(y, { stiffness: 50, damping: 20 });
+
+    const rotateX = useTransform(mouseY, [-0.5, 0.5], ["15deg", "-15deg"]);
+    const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-15deg", "15deg"]);
+
+    function handleMouseMove(e: React.MouseEvent) {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const width = rect.width;
+        const height = rect.height;
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        const xPct = mouseX / width - 0.5;
+        const yPct = mouseY / height - 0.5;
+        x.set(xPct);
+        y.set(yPct);
+    }
+
     const isElite = stats.commitRank.includes("0.5") || stats.commitRank.includes("1%");
 
-    const bgGradient = isElite
-        ? "from-yellow-500/20 to-amber-900/20"
-        : "from-blue-500/20 to-purple-900/20";
-
-    const textColor = isElite
-        ? "text-yellow-400"
-        : "text-blue-400";
-
     return (
-        <div className={`w-full h-full flex flex-col justify-center items-center p-8 bg-gradient-to-br ${bgGradient} relative`}>
-            {/* Ambient Noise Texture */}
-            <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150 mix-blend-overlay" />
+        <div
+            className="w-full h-full flex items-center justify-center bg-[#050505] overflow-hidden"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={() => { x.set(0); y.set(0); }}
+        >
+            {/* Background Gradients */}
+            <div className="absolute top-[-20%] left-[-20%] w-[80vw] h-[80vw] bg-purple-900/30 rounded-full blur-[120px]" />
+            <div className="absolute bottom-[-20%] right-[-20%] w-[80vw] h-[80vw] bg-blue-900/20 rounded-full blur-[120px]" />
 
             <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="relative z-10 w-full max-w-sm"
+                style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+                className="relative w-[90%] max-w-md aspect-[3/4]"
             >
-                <div className="bg-black/50 backdrop-blur-xl border border-white/10 rounded-3xl p-8 text-center shadow-2xl">
-                    <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.3, type: "spring" }}
-                        className="w-20 h-20 mx-auto bg-white/10 rounded-full flex items-center justify-center mb-6 text-4xl"
-                    >
-                        {isElite ? "👑" : "⚡️"}
-                    </motion.div>
+                <div className="absolute inset-0 bg-black/40 backdrop-blur-xl border border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden group">
 
-                    <h2 className="text-zinc-400 text-sm uppercase tracking-widest font-bold mb-2">
-                        Global Ranking
-                    </h2>
+                    {/* Holographic Shine */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-                    <h1 className={`text-5xl font-black ${textColor} mb-4 leading-tight`}>
-                        {stats.commitRank}
-                    </h1>
+                    <div className="h-full flex flex-col justify-between p-10 relative z-10">
+                        <div className="flex justify-between items-start">
+                            <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-2xl bg-white/5">
+                                {isElite ? "🏆" : "🎖️"}
+                            </div>
+                            <div className="text-right">
+                                <p className="text-xs uppercase tracking-widest text-zinc-500 font-bold">Rank</p>
+                                <p className="text-sm font-mono text-white/70">#2025</p>
+                            </div>
+                        </div>
 
-                    <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden mb-6">
-                        <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: "100%" }}
-                            transition={{ delay: 0.5, duration: 1.5, ease: "circOut" }}
-                            className={`h-full bg-current ${textColor}`}
-                        />
+                        <div className="space-y-4 text-center transform translate-z-10">
+                            <h2 className="text-lg text-zinc-400 font-medium tracking-wide uppercase">You reached the</h2>
+                            <h1 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/40">
+                                {stats.commitRank}
+                            </h1>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: "100%" }}
+                                    transition={{ delay: 0.5, duration: 1.5, ease: "easeOut" }}
+                                    className={`h-full bg-linear-to-r ${isElite ? "from-yellow-400 to-amber-600" : "from-blue-400 to-purple-600"}`}
+                                />
+                            </div>
+                            <p className="text-center text-sm text-zinc-500">
+                                Top contributor percentile
+                            </p>
+                        </div>
                     </div>
-
-                    <p className="text-white/80 font-medium">
-                        {isElite
-                            ? "You are carrying the open source community."
-                            : "You're consistently shipping value."}
-                    </p>
                 </div>
             </motion.div>
         </div>

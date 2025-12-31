@@ -3,7 +3,9 @@ export type WrappedSlide =
     | "commitRank"
     | "topLanguages"
     | "longestStreak"
-    | "summary";
+    | "summary"
+    | 'persona'
+    | 'achievements';
 
 export interface WrappedConfig {
     theme: "neon" | "dark" | "minimal";

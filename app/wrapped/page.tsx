@@ -16,7 +16,6 @@ export default function WrappedPage() {
 
     useEffect(() => {
         if (data) return;
-
         if (typeof window === "undefined") return;
 
         const stats = sessionStorage.getItem("wrappedStats");
@@ -36,7 +35,6 @@ export default function WrappedPage() {
             console.error("Failed to parse wrapped data", e);
             router.push("/");
         }
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -55,9 +53,22 @@ export default function WrappedPage() {
         }
     }, [currentSlideIndex]);
 
+    const handleTap = (e: React.MouseEvent | React.TouchEvent) => {
+        const target = e.target as HTMLElement;
+        if (target.tagName === "BUTTON" || target.closest("button")) return;
+
+        const screenWidth = window.innerWidth;
+        const clientX = 'touches' in e ? e.changedTouches[0].clientX : (e as React.MouseEvent).clientX;
+
+        if (clientX < screenWidth / 3) {
+            goToPrev();
+        } else {
+            goToNext();
+        }
+    };
+
     useEffect(() => {
         if (!data || isPaused) return;
-
         const timer = setTimeout(goToNext, SLIDE_DURATION);
         return () => clearTimeout(timer);
     }, [currentSlideIndex, data, isPaused, goToNext]);
@@ -68,7 +79,7 @@ export default function WrappedPage() {
     return (
         <main className="fixed inset-0 bg-black overflow-hidden font-sans select-none">
             {/* Story Progress Bars */}
-            <div className="absolute top-0 left-0 right-0 z-50 p-4 pt-6 flex gap-2">
+            <div className="absolute top-0 left-0 right-0 z-50 p-4 pt-6 flex gap-2 pointer-events-none">
                 {data.config.slides.map((slide: string, index: number) => (
                     <div
                         key={index}
@@ -93,31 +104,17 @@ export default function WrappedPage() {
 
             {/* Close Button */}
             <button
-                onClick={() => router.push("/")}
-                className="absolute top-8 right-4 z-50 p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-colors"
+                onClick={(e) => { e.stopPropagation(); router.push("/"); }}
+                className="absolute top-8 right-4 z-50 p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-colors cursor-pointer"
             >
                 <X className="w-6 h-6" />
             </button>
 
-            {/* Tap Navigation Zones */}
-            <div className="absolute inset-0 z-40 flex">
-                <div
-                    className="w-1/3 h-full cursor-w-resize active:opacity-10"
-                    onClick={goToPrev}
-                />
-                <div
-                    className="w-2/3 h-full cursor-e-resize active:opacity-10"
-                    onClick={goToNext}
-                />
-            </div>
-
-            {/* Content Area */}
+            {/* Main Click/Tap Area */}
             <div
-                className="relative z-0 w-full h-full flex items-center justify-center"
+                className="relative z-0 w-full h-full flex items-center justify-center cursor-pointer"
                 onMouseDown={() => setIsPaused(true)}
-                onMouseUp={() => setIsPaused(false)}
-                onTouchStart={() => setIsPaused(true)}
-                onTouchEnd={() => setIsPaused(false)}
+                onMouseUp={(e) => { setIsPaused(false); handleTap(e); }}
             >
                 <AnimatePresence mode="wait">
                     <motion.div
