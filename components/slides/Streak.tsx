@@ -1,49 +1,44 @@
 "use client";
-
 import { motion } from "motion/react";
 
-interface Props {
-    stats: {
-        longestStreak: number;
-    };
-    onNext: () => void;
-}
-
-export default function Streak({ stats, onNext }: Props) {
-    const message =
-        stats.longestStreak >= 60
-            ? "You didn’t break the chain."
-            : stats.longestStreak >= 30
-                ? "Consistency was your strength."
-                : "You kept showing up.";
-
+export default function Streak({ stats }: any) {
     return (
-        <motion.section
-            onClick={onNext}
-            className="h-screen w-screen flex flex-col justify-center items-center text-center px-8 cursor-pointer"
-            initial={{ opacity: 0, y: 60 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-        >
-      <span className="uppercase tracking-widest text-sm opacity-60 mb-4">
-        Longest Streak
-      </span>
+        <div className="w-full h-full flex flex-col justify-center items-center p-8 bg-gradient-to-b from-orange-900/20 to-black relative">
 
-            <h1 className="text-8xl font-extrabold leading-none">
-                {stats.longestStreak}
-            </h1>
+            {/* Fire Glow Behind */}
+            <motion.div
+                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-orange-500/30 rounded-full blur-[80px]"
+            />
 
-            <p className="mt-4 text-2xl opacity-80">
-                days in a row
-            </p>
+            <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="relative z-10 text-center"
+            >
+                <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    className="text-6xl mb-4"
+                >
+                    🔥
+                </motion.div>
 
-            <p className="mt-10 text-xl font-medium text-purple-300">
-                {message}
-            </p>
+                <h1 className="text-9xl font-black text-white tracking-tighter drop-shadow-2xl">
+                    {stats.longestStreak}
+                </h1>
 
-            <span className="absolute bottom-10 text-sm opacity-40">
-        Tap to continue
-      </span>
-        </motion.section>
+                <h2 className="text-2xl font-bold text-orange-400 uppercase tracking-widest mt-2">
+                    Day Streak
+                </h2>
+
+                <p className="mt-8 text-white/60 max-w-xs mx-auto text-lg leading-relaxed">
+                    {stats.longestStreak > 10
+                        ? "Unstoppable. You turned coding into a habit."
+                        : "Consistency builds momentum."}
+                </p>
+            </motion.div>
+        </div>
     );
 }

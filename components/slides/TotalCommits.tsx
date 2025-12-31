@@ -3,39 +3,71 @@ import { motion } from "motion/react";
 
 export default function TotalCommits({ stats }: any) {
     return (
-        <div className="w-full h-full flex flex-col justify-center items-center p-8 bg-gradient-to-br from-[#1a1a1a] to-black relative overflow-hidden">
-            {/* Background elements */}
-            <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-green-500/5 rounded-full blur-[100px] pointer-events-none"
-            />
+        <div className="w-full h-full flex flex-col justify-center items-center p-8 bg-black relative overflow-hidden">
+            {[...Array(20)].map((_, i) => (
+                <motion.div
+                    key={i}
+                    className="absolute bg-white/20 rounded-full"
+                    style={{
+                        // eslint-disable-next-line react-hooks/purity
+                        width: Math.random() * 4 + 1 + "px",
+                        // eslint-disable-next-line react-hooks/purity
+                        height: Math.random() * 100 + 50 + "px",
+                        // eslint-disable-next-line react-hooks/purity
+                        left: Math.random() * 100 + "%",
+                        // eslint-disable-next-line react-hooks/purity
+                        top: Math.random() * 100 + "%",
+                    }}
+                    animate={{
+                        y: [1000, -1000],
+                        opacity: [0, 1, 0],
+                    }}
+                    transition={{
+                        // eslint-disable-next-line react-hooks/purity
+                        duration: Math.random() * 2 + 1,
+                        repeat: Infinity,
+                        ease: "linear",
+                        // eslint-disable-next-line react-hooks/purity
+                        delay: Math.random() * 2,
+                    }}
+                />
+            ))}
 
             <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="text-center relative z-10"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, ease: "backOut" }}
+                className="relative z-10 text-center"
             >
-                <h2 className="text-2xl font-medium text-white/60 mb-8 uppercase tracking-widest">
-                    You shipped code
-                </h2>
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-2xl text-zinc-400 font-medium tracking-widest uppercase mb-4"
+                >
+                    2025 Impact
+                </motion.div>
+
                 <div className="relative inline-block">
-                    <h1 className="text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-green-400 to-emerald-700 tracking-tighter">
+                    <h1 className="text-8xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-zinc-600 tracking-tighter">
                         {stats.totalCommits}
                     </h1>
-                    <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.8, type: "spring" }}
-                        className="absolute -top-4 -right-8 text-4xl"
-                    >
-                        🚀
-                    </motion.span>
+                    {/* Decorative Elements around number */}
+                    <motion.div
+                        className="absolute -inset-4 border border-white/10 rounded-full blur-xl"
+                        animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.2, 0.5] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                    />
                 </div>
-                <p className="mt-8 text-xl text-white/40">
-                    times this year
-                </p>
+
+                <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.6 }}
+                    className="mt-6 text-xl text-zinc-500 font-medium"
+                >
+                    Commits Pushed
+                </motion.p>
             </motion.div>
         </div>
     );

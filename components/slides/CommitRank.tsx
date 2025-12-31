@@ -1,52 +1,61 @@
 "use client";
-
 import { motion } from "motion/react";
 
-interface Props {
-    stats: {
-        commitRank: string;
-        totalCommits: number;
-    };
-    onNext: () => void;
-}
+export default function CommitRank({ stats }: any) {
+    const isElite = stats.commitRank.includes("0.5") || stats.commitRank.includes("1%");
 
-export default function CommitRank({ stats, onNext }: Props) {
-    const hypeLine =
-        stats.commitRank.includes("0.5")
-            ? "You’re operating at elite levels."
-            : stats.commitRank.includes("1%-3%")
-                ? "You’re among the most active developers."
-                : stats.commitRank.includes("5%-10%")
-                    ? "You’re well above average."
-                    : "You showed up — and that matters.";
+    const bgGradient = isElite
+        ? "from-yellow-500/20 to-amber-900/20"
+        : "from-blue-500/20 to-purple-900/20";
+
+    const textColor = isElite
+        ? "text-yellow-400"
+        : "text-blue-400";
 
     return (
-        <motion.section
-            onClick={onNext}
-            className="h-screen w-screen flex flex-col justify-center items-center text-center px-8 cursor-pointer"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-        >
-      <span className="uppercase tracking-widest text-sm opacity-60 mb-4">
-        Your Commit Rank
-      </span>
+        <div className={`w-full h-full flex flex-col justify-center items-center p-8 bg-gradient-to-br ${bgGradient} relative`}>
+            {/* Ambient Noise Texture */}
+            <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150 mix-blend-overlay" />
 
-            <h1 className="text-6xl md:text-7xl font-extrabold bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                {stats.commitRank}
-            </h1>
+            <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="relative z-10 w-full max-w-sm"
+            >
+                <div className="bg-black/50 backdrop-blur-xl border border-white/10 rounded-3xl p-8 text-center shadow-2xl">
+                    <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.3, type: "spring" }}
+                        className="w-20 h-20 mx-auto bg-white/10 rounded-full flex items-center justify-center mb-6 text-4xl"
+                    >
+                        {isElite ? "👑" : "⚡️"}
+                    </motion.div>
 
-            <p className="mt-6 text-xl opacity-80">
-                with {stats.totalCommits.toLocaleString()} commits
-            </p>
+                    <h2 className="text-zinc-400 text-sm uppercase tracking-widest font-bold mb-2">
+                        Global Ranking
+                    </h2>
 
-            <p className="mt-10 text-xl font-medium text-pink-300 max-w-xl">
-                {hypeLine}
-            </p>
+                    <h1 className={`text-5xl font-black ${textColor} mb-4 leading-tight`}>
+                        {stats.commitRank}
+                    </h1>
 
-            <span className="absolute bottom-10 text-sm opacity-40">
-        Tap to continue
-      </span>
-        </motion.section>
+                    <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden mb-6">
+                        <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: "100%" }}
+                            transition={{ delay: 0.5, duration: 1.5, ease: "circOut" }}
+                            className={`h-full bg-current ${textColor}`}
+                        />
+                    </div>
+
+                    <p className="text-white/80 font-medium">
+                        {isElite
+                            ? "You are carrying the open source community."
+                            : "You're consistently shipping value."}
+                    </p>
+                </div>
+            </motion.div>
+        </div>
     );
 }
