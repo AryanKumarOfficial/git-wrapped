@@ -1,10 +1,16 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
+import {Button} from "@/components/ui/button";
+import {Checkbox} from "@/components/ui/checkbox";
+import {useState} from "react";
+import type {WrappedConfig, WrappedSlide} from "@/types/wrapped"
 
-const ALL_SLIDES = [
+interface Props {
+    stats: any;
+    onGenerate: (config: WrappedConfig) => void;
+}
+
+const ALL_SLIDES: WrappedSlide[] = [
     "totalCommits",
     "commitRank",
     "topLanguages",
@@ -12,11 +18,11 @@ const ALL_SLIDES = [
     "summary",
 ];
 
-export default function CustomizePanel({ stats, onGenerate }: any) {
-    const [slides, setSlides] = useState(ALL_SLIDES);
-    const [theme, setTheme] = useState("neon");
+export default function CustomizePanel({onGenerate}: Props) {
+    const [slides, setSlides] = useState<WrappedSlide[]>(ALL_SLIDES);
+    const [theme, setTheme] = useState<WrappedConfig["theme"]>("neon");
 
-    function toggleSlide(slide: string) {
+    function toggleSlide(slide: WrappedSlide) {
         setSlides((prev) =>
             prev.includes(slide)
                 ? prev.filter((s) => s !== slide)
