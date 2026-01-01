@@ -10,15 +10,19 @@ interface Props {
     onGenerate: (config: WrappedConfig) => void;
 }
 
+// FIX: Added 'persona' and 'achievements' to this list
 const ALL_SLIDES: { id: WrappedSlide; label: string }[] = [
     { id: "totalCommits", label: "Total Commits" },
     { id: "commitRank", label: "Rank" },
     { id: "topLanguages", label: "Top Languages" },
     { id: "longestStreak", label: "Best Streak" },
+    { id: "persona", label: "Persona Identity" },
+    { id: "achievements", label: "Achievements" },
     { id: "summary", label: "Summary Card" },
 ];
 
 export default function CustomizePanel({ onGenerate }: Props) {
+    // Default to selecting all slides
     const [slides, setSlides] = useState<WrappedSlide[]>(ALL_SLIDES.map(s => s.id));
 
     function toggleSlide(slide: WrappedSlide) {
@@ -58,7 +62,7 @@ export default function CustomizePanel({ onGenerate }: Props) {
             </div>
 
             <Button
-                className="w-full h-12 bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white font-bold rounded-xl"
+                className="w-full h-12 bg-linear-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white font-bold rounded-xl"
                 onClick={() => onGenerate({ theme: "neon", slides })}
                 disabled={slides.length === 0}
             >
